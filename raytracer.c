@@ -15,6 +15,8 @@ typedef struct
 
 float px,py,pdx,pdy,pa; //player position
 
+int  gw_Width,gw_Height;
+
 void drawPlayer()
 {
 	glColor3f(1,1,0);
@@ -107,9 +109,9 @@ void drawRays2D()
 		
 		//---Draw 3D Walls---
 		float ca=pa-ra; if(ca<0){ ca+=2*PI;} if(ca>2*PI){ ca-=2*PI;} disT=disT*cos(ca);	//fix fisheye
-		float lineH=(mapS*320)/disT; if(lineH>320){	lineH=320;} 						//line height
-		float lineO=160-lineH/2;														//line offset
-		glLineWidth(8);glBegin(GL_LINES);glVertex2i(r*8+530,lineO);glVertex2i(r*8+530,lineH+lineO);glEnd();
+		float lineH=(mapS*gw_Height)/disT; if(lineH>gw_Height){	lineH=gw_Height;} 		//line height
+		float lineO=gw_Height/2-lineH/2;												//line offset
+		glLineWidth(8);glBegin(GL_LINES);glVertex2i(r*8+530,lineO);glVertex2i(r*8+530,lineH+lineO);glEnd(); //====RESIZE WINDOW====
 		
 		ra+=DR; if(ra<0) { ra+=2*PI;} if(ra>2*PI){ ra-=2*PI;}
 	}
@@ -152,8 +154,9 @@ void display()
 
 void init()
 {
+	gw_Width = 1024; gw_Height = 512;
 	glClearColor(0.3,0.3,0.3,0);
-	gluOrtho2D(0,1024,512,0);
+	gluOrtho2D(0,gw_Width,gw_Height,0);
 	px=300; py=300; pdx=cos(pa)*5; pdy=sin(pa)*5;
 }
 
@@ -175,11 +178,6 @@ void ButtonUp(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-void resize(int w, int h)
-{
-	glutReshapeWindow(1024, 512);
-}
-
 int main(int argc, char* argv[])
 { 
 	glutInit(&argc, argv);
@@ -189,7 +187,7 @@ int main(int argc, char* argv[])
 	glutCreateWindow("3D JooJ");
 	init();
 	glutDisplayFunc(display);
-	glutReshapeFunc(resize);
+	//glutReshapeFunc(resize);
 	glutKeyboardFunc(ButtonDown);
 	glutKeyboardUpFunc(ButtonUp);
 	glutMainLoop();
